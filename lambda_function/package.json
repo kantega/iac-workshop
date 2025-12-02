@@ -1,0 +1,7 @@
+{
+  "name": "s3-to-dynamodb-lambda",
+  "version": "1.0.0",
+  "description": "Lambda function to process S3 events and write JSON content to DynamoDB",
+  "main": "index.js"
+}
+

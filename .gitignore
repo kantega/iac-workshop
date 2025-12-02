@@ -1,0 +1,47 @@
+# Local .terraform directories
+**/.terraform/*
+
+# .tfstate files
+*.tfstate
+*.tfstate.*
+
+# Crash log files
+crash.log
+crash.*.log
+
+# Override files
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# CLI configuration files
+.terraformrc
+terraform.rc
+
+# Lock files (some teams commit this, some don't - your choice)
+# .terraform.lock.hcl
+
+# Environment variables
+.env
+*.env
+
+# Lambda function packages
+*.zip
+**/lambda_functions/**/node_modules/
+**/lambda_functions/**/.npm/
+**/lambda_functions/**/package-lock.json
+
+# IDE and OS files
+.idea/
+.vscode/
+.DS_Store
+*.swp
+*.swo
+*~
+
+# Temporary/scratch files
+Untitled-*
+
+# Presentation materials (optional - remove if you want to track these)
+slides/
