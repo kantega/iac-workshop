@@ -473,7 +473,9 @@ module "process_s3_to_dynamo" {
 
 And to reference the lambda function created by the module in the s3 bucket notification and lambda permission resources, you can use `module.process_s3_to_dynamo.lambda_function_name` and `module.process_s3_to_dynamo.lambda_function_arn` respectively.
 
-See if you can create a module for the s3 bucket as well, with an is_public parameter to conditionally create the `aws_s3_bucket_public_access_block` resource.
+See if you can make the following modules:
+1. A module for the s3 bucket, with an `is_public` parameter to conditionally create the `aws_s3_bucket_public_access_block` resource.
+2. A module for triggering a lambda from s3 uploads, which also configures `aws_lambda_permission`.
 
 Otherwise, feel free to experiment with the modules by adding more parameters or changing the implementation.
 
