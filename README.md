@@ -31,6 +31,7 @@ And give the following details when prompted:
 - SSO region: `eu-north-1`
 - SSO registration scopes [sso:account:access]: Press enter to accept `sso:account:access`
 
+- CLI default client Region: `eu-north-1`
 - CLI default output format (json if not specified) [None]: Press enter to accept `json`
 - Profile name [PowerUserAccess-************]: `iacws`
 
@@ -49,10 +50,15 @@ To install the OpenTofu CLI, run the following command in your terminal:
 brew install opentofu
 ```
 
-That's all!
+For those that are on Linux, you can find installation instructions at https://opentofu.org/docs/intro/install/
+
+
+**You are now ready to provision with OpenTofu!!**
 
 
 # Setting up the state bucket
+**This section will be done by the instructor, but is added here for completeness.**
+
 We will now set up our remote state backend and provider configuration for OpenTofu.
 
 In the start we have a bit of a chicken and egg problem, as we want to store our terraform state in an S3 bucket, but we need terraform to create the S3 bucket for us.
@@ -373,6 +379,70 @@ Now that we have provisioned all the necessary resources, feel free to test the 
 
 You will either be able to enjoy a new entry in the dynamo table or some fresh new error messages in the cloudwatch logs!
 
+# Meta-arguments
+
+In addition to the basic resource configuration, there are also some meta-arguments that can be used to further customize the behavior of the resources.
+Some of the most commonly used meta-arguments are:
+
+## depends_on
+The `depends_on` meta-argument is used to specify explicit dependencies between resources. This is useful when the dependency is not automatically inferred by OpenTofu.
+
+For example, in the `aws_s3_bucket_notification` resource above, we used `depends_on` to ensure that the lambda permission is created before the bucket notification.
+```hcl
+depends_on = [aws_lambda_permission.allow_s3]
+```
+
+## lifecycle
+The `lifecycle` meta-argument is used to customize the lifecycle of a resource. it has several sub-arguments, but the most commonly used are:
+- `create_before_destroy`: This ensures that a new resource is created before the old one is destroyed. This is useful for resources that cannot be deleted without causing downtime.
+- `prevent_destroy`: This prevents a resource from being destroyed. This is useful for resources that should not be deleted, such as production databases.
+- `ignore_changes`: This is used to ignore changes to specific attributes of a resource. This is useful for attributes that are managed outside of OpenTofu, such as tags or metadata.
+- `replace_triggered_by`: This is used to specify other resources or attributes that, when changed, will trigger the replacement of the resource. This is useful for resources that need to be recreated when certain dependencies change.
+
+An example of a resource that forces replace when a hash changes:
+```hcl
+lifecycle {
+  replace_triggered_by = [md5(file("path/to/file"))]
+}
+```
+
+An example of a resource that ignores changes to tags (meaning you can change the tags in the AWS console without terraform trying to revert them):
+```hcl
+lifecycle {
+  ignore_changes = [tags]
+}
+```
+
+## count
+Count is a meta-argument that can be used to create multiple instances of a resource, but more commonly used to conditionally create a single resource.
+
+An exaple of a s3 bucket that is created based on a variable:
+```hcl
+resource "aws_s3_bucket" "example" {
+    count  = var.create_bucket ? 1 : 0
+    bucket = "example-bucket"
+}
+```
+
+This meta-argument is especially useful when creating resources in modules, as we will see below.
+
+## for_each
+Similar to count, for_each is a meta-argument that can be used to create multiple instances of a resource based on a map or set of strings.
+
+An example of creating multiple s3 buckets based on a list of names:
+```hcl
+variable "bucket_names" {
+  type    = list(string)
+  default = ["bucket1", "bucket2", "bucket3"]
+}
+
+resource "aws_s3_bucket" "example" {
+  for_each = toset(var.bucket_names)
+  bucket   = each.value
+}
+```
+
+Can also be useful when creating resources in modules.
 
 # Modules
 Modules are a way to organize and reuse terraform code. They allow you to group related resources together and manage them as a single unit.
