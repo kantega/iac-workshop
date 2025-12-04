@@ -546,6 +546,7 @@ And to reference the lambda function created by the module in the s3 bucket noti
 See if you can make the following modules:
 1. A module for the s3 bucket, with an `is_public` parameter to conditionally create the `aws_s3_bucket_public_access_block` resource.
 2. A module for triggering a lambda from s3 uploads, which also configures `aws_lambda_permission`.
+3. (Bonus) A module that creates multiple lambdas that outputs the json to a list of dynamodb tables, using `for_each`.
 
 Otherwise, feel free to experiment with the modules by adding more parameters or changing the implementation.
 
