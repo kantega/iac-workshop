@@ -2,6 +2,12 @@ variable "function_name" {
   description = "The name of the lambda function"
   type        = string
 }
+
+variable "username" {
+  description = "The username for prefixing resources"
+  type        = string
+}
+
 variable "package_name" {
   description = "The name of the package in the s3 bucket"
   type        = string
