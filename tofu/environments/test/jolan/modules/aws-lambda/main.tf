@@ -3,8 +3,7 @@ data "aws_iam_role" "lambda_execution_role" {
 }
 
 locals {
-  username = "jolan" # Replace with your username
-  prefix = "iacws-${local.username}"
+  prefix = "iacws-${var.username}"
   s3_bucket = "iacws-package-bucket"
   default_handler = "index.handler"
   default_runtime = "nodejs22.x"
